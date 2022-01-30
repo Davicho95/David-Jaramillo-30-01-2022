@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ListaTareas.Views.TareasPage"
+             BindingContext="{Binding Main, Source={StaticResource Locator}}"
+             Title="Lista de tareas">
+    <ContentPage.Content>
+        <AbsoluteLayout BindingContext="{Binding Tareas}">
+            <StackLayout AbsoluteLayout.LayoutFlags="All" 
+                         AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <Grid HorizontalOptions="FillAndExpand"
+                      VerticalOptions="FillAndExpand">
+                    
+                    <!--Lista Tareas-->
+                    <StackLayout Padding="10,10"
+                                 VerticalOptions="FillAndExpand">
+                        <Label Text="Desliza para la izquierda o derecha para eliminar o poner como completa a una tarea."
+                               HorizontalTextAlignment="Center"/>
+                        <BoxView BackgroundColor="Black"
+                                 HeightRequest="1"/>
+                        <RefreshView IsRefreshing="{Binding EstaCargando}"
+                                     Command="{Binding RecargarCommand}">
+                            <CollectionView x:Name="collectionView"
+                                            ItemsSource="{Binding TareasLista}"
+                                            HorizontalOptions="FillAndExpand"
+                                            VerticalOptions="FillAndExpand"
+                                            SelectionMode="None">
+                                <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout Orientation="Vertical"
+                                                       ItemSpacing="5" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.EmptyView>
+
+                                    <StackLayout HorizontalOptions="CenterAndExpand"
+                                                 VerticalOptions="CenterAndExpand">
+                                        <Label Text="No existe tareas."
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center"
+                                               TextColor="Gray"
+                                               HorizontalOptions="FillAndExpand"
+                                               VerticalOptions="FillAndExpand"/>
+                                    </StackLayout>
+
+                                </CollectionView.EmptyView>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <SwipeView>
+                                            <SwipeView.LeftItems>
+
+                                                <SwipeItem Text="Eliminar"
+                                                           IconImageSource="eliminar.png"
+                                                           BackgroundColor="#FF5733"
+                                                           Command="{Binding BindingContext.EliminarTareaCommand, Source={x:Reference collectionView} }"
+                                                           CommandParameter="{Binding .}" />
+
+                                            </SwipeView.LeftItems>
+                                            <SwipeView.RightItems>
+
+                                                <SwipeItem Text="Completar"
+                                                           IconImageSource="completar.png"
+                                                           BackgroundColor="#08a800"
+                                                           Command="{Binding Source={x:Reference collectionView}, Path= BindingContext.CompletarTareaCommand }"
+                                                           CommandParameter="{Binding .}" />
+                                            </SwipeView.RightItems>
+                                            <Frame CornerRadius="20"
+                                                   HorizontalOptions="FillAndExpand"
+                                                   VerticalOptions="CenterAndExpand"
+                                                   IsClippedToBounds="True"
+                                                   BorderColor="Black"
+                                                   HasShadow="False">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="auto"/>
+                                                        <RowDefinition Height="auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="7*"/>
+                                                        <ColumnDefinition Width="2*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackLayout Grid.Column="0"
+                                                                 Grid.Row="0">
+                                                        <Label Text="{Binding Nombre}"
+                                                               TextColor="Black"
+                                                               FontAttributes="Bold"/>
+                                                    </StackLayout>
+                                                    <StackLayout Grid.Column="0"
+                                                                 Grid.Row="1">
+                                                        <Label Text="{Binding Descripcion}"
+                                                               TextColor="Black"/>
+                                                    </StackLayout>
+                                                    <StackLayout Grid.Column="1"
+                                                                 Grid.RowSpan="2"
+                                                                 VerticalOptions="CenterAndExpand"
+                                                                 HorizontalOptions="CenterAndExpand"
+                                                                 IsVisible="{Binding Completa}">
+                                                        <Image Source="vistoVerde.png"/>
+                                                        <Label Text="Completada"/>
+                                                    </StackLayout>
+                                                </Grid>
+                                            </Frame>
+                                        </SwipeView>
+
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </RefreshView>
+
+                    </StackLayout>
+
+                    <!--Botón Crear Tarea-->
+                    <StackLayout HorizontalOptions="End"
+                                 VerticalOptions="End"
+                                 Padding="0,0,20,30">
+                        <ImageButton Source="crear.png"
+                                     BackgroundColor="#002947"
+                                     CornerRadius="50"
+                                     Command="{Binding CrearTareaCommand}"/>
+                    </StackLayout>
+                </Grid>
+            </StackLayout>
+
+            <!--popup de carga-->
+            <ContentView x:Name="popupLoadingView" 
+                         BackgroundColor="Transparent" 
+                         Padding="10, 0" 
+                         IsVisible="{Binding Cargando, Mode=TwoWay}" 
+                         AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                         AbsoluteLayout.LayoutFlags="All">
+                <Frame CornerRadius="20" 
+                       HorizontalOptions="CenterAndExpand" 
+                       VerticalOptions="CenterAndExpand"
+                       HasShadow="False"
+                       IsClippedToBounds="False"
+                       Padding="0"
+                       BackgroundColor="Black" 
+                       Opacity="0.5">
+                    <StackLayout VerticalOptions="Center" 
+                                 HorizontalOptions="Center">
+                        <StackLayout Orientation="Vertical" 
+                                     WidthRequest="150" 
+                                     Padding="10,10,10,10">
+
+                            <ActivityIndicator x:Name="img_carga"
+                                               IsRunning="{Binding Cargando}"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               IsVisible="{Binding Cargando}"/>
+                            <Label x:Name="lblLoadingText" 
+                                   TextColor="White" 
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center" 
+                                   VerticalTextAlignment="Center" 
+                                   Text="Cargando...">
+                            </Label>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+            </ContentView>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

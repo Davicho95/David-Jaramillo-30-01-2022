@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ListaTareas.Views.CrearTareaPage"
+             BindingContext="{Binding Main, Source={StaticResource Locator}}"
+             Title="Crear tarea">
+    <ContentPage.Content>
+        <AbsoluteLayout BindingContext="{Binding CrearTarea}">
+            <StackLayout AbsoluteLayout.LayoutFlags="All" 
+                         AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <!--Lista Tareas-->
+                <StackLayout Padding="10,0">
+                    <Entry Placeholder="Nombre de la tarea"
+                           Text="{Binding Nombre, Mode=TwoWay}"/>
+
+                    <Editor Placeholder="Descripción"
+                            AutoSize="TextChanges"
+                            Text="{Binding Descripcion, Mode=TwoWay}"/>
+
+                </StackLayout>
+
+                <!--Botón Crear Tarea-->
+                <StackLayout Padding="20,0">
+                    <Button Text="Crear"
+                            CornerRadius="50"
+                            BackgroundColor="#002947"
+                            TextColor="White"
+                            Command="{Binding CrearTareaCommand}"/>
+                </StackLayout>
+            </StackLayout>
+
+            <!--popup de carga-->
+            <ContentView x:Name="popupLoadingView" 
+                         BackgroundColor="Transparent" 
+                         Padding="10, 0" 
+                         IsVisible="{Binding Cargando, Mode=TwoWay}" 
+                         AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                         AbsoluteLayout.LayoutFlags="All">
+                <Frame CornerRadius="20" 
+                       HorizontalOptions="CenterAndExpand" 
+                       VerticalOptions="CenterAndExpand"
+                       HasShadow="False"
+                       IsClippedToBounds="False"
+                       Padding="0"
+                       BackgroundColor="Black" 
+                       Opacity="0.5">
+                    <StackLayout VerticalOptions="Center" 
+                                 HorizontalOptions="Center">
+                        <StackLayout Orientation="Vertical" 
+                                     WidthRequest="150" 
+                                     Padding="10,10,10,10">
+
+                            <ActivityIndicator x:Name="img_carga"
+                                               IsRunning="{Binding Cargando}"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               IsVisible="{Binding Cargando}"/>
+                            <Label x:Name="lblLoadingText" 
+                                   TextColor="White" 
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center" 
+                                   VerticalTextAlignment="Center" 
+                                   Text="Cargando...">
+                            </Label>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+            </ContentView>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>
